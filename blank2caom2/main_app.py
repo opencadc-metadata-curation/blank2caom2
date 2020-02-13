@@ -173,17 +173,22 @@ def _get_uris(args):
     return result
 
 
+def to_caom2():
+    args = get_gen_proc_arg_parser().parse_args()
+    uris = _get_uris(args)
+    blueprints = _build_blueprints(uris)
+    result = gen_proc(args, blueprints)
+    logging.debug('Done {} processing.'.format(APPLICATION))
+    return result
+           
+
 def blank_main_app():
     args = get_gen_proc_arg_parser().parse_args()
     try:
-        uris = _get_uris(args)
-        blueprints = _build_blueprints(uris)
-        result = gen_proc(args, blueprints)
+        result = to_caom2()
         sys.exit(result)
     except Exception as e:
         logging.error('Failed {} execution for {}.'.format(APPLICATION, args))
         tb = traceback.format_exc()
         logging.debug(tb)
         sys.exit(-1)
-
-    logging.debug('Done {} processing.'.format(APPLICATION))
