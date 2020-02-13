@@ -71,8 +71,7 @@ import logging
 import sys
 import traceback
 
-from caom2pipe import execute_composable as ec
-from caom2pipe import manage_composable as mc
+from caom2pipe import run_composable as rc
 from blank2caom2 import APPLICATION, BlankName
 
 
@@ -87,10 +86,10 @@ def _run():
     :return 0 if successful, -1 if there's any sort of failure. Return status
         is used by airflow for task instance management and reporting.
     """
-    config = mc.Config()
-    config.get_executors()
-    return ec.run_by_file(config, BlankName, APPLICATION,
-                          meta_visitors, data_visitors, chooser=None)
+    return rc.run_by_todo(config=None, name_builder=None, 
+                          command_name=APPLICATION,
+                          meta_visitors=meta_visitors, 
+                          data_visitors=data_visitors, chooser=None)
 
 
 def run():
@@ -109,10 +108,11 @@ def _run_state():
     """Uses a state file with a timestamp to control which entries will be
     processed.
     """
-    config = mc.Config()
-    config.get_executors()
-    return ec.run_from_state(config, BlankName, APPLICATION, meta_visitors,
-                             data_visitors, bookmark=None, work=None)
+    return rc.run_by_state(config=None, name_builder=None,
+                           command_name=APPLICATION, 
+                           bookmark_name=None, meta_visitors=meta_visitors,
+                           data_visitors=data_visitors, end_time=None,
+                           source=None, chooser=None)
 
 
 def run_state():
