@@ -162,14 +162,14 @@ def _get_uris(args):
     if args.local:
         for ii in args.local:
             file_id = ec.StorageName.remove_extensions(os.path.basename(ii))
-            file_name = '{}.fits'.format(file_id)
+            file_name = f'{file_id}.fits'
             result.append(BlankName(file_name=file_name).file_uri)
     elif args.lineage:
         for ii in args.lineage:
             result.append(ii.split('/', 1)[1])
     else:
         raise mc.CadcException(
-            'Could not define uri from these args {}'.format(args))
+            f'Could not define uri from these args {args}')
     return result
 
 
@@ -178,7 +178,7 @@ def to_caom2():
     uris = _get_uris(args)
     blueprints = _build_blueprints(uris)
     result = gen_proc(args, blueprints)
-    logging.debug('Done {} processing.'.format(APPLICATION))
+    logging.debug(f'Done {APPLICATION} processing.')
     return result
            
 
@@ -188,7 +188,7 @@ def blank_main_app():
         result = to_caom2()
         sys.exit(result)
     except Exception as e:
-        logging.error('Failed {} execution for {}.'.format(APPLICATION, args))
+        logging.error(f'Failed {APPLICATION} execution for {args}.')
         tb = traceback.format_exc()
         logging.debug(tb)
         sys.exit(-1)
