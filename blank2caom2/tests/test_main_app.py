@@ -69,7 +69,7 @@
 
 from mock import patch
 
-from blank2caom2 import blank_main_app, APPLICATION, COLLECTION, BlankName
+from blank2caom2 import main_app, APPLICATION, COLLECTION, BlankName
 from blank2caom2 import ARCHIVE
 from caom2.diff import get_differences
 from caom2pipe import manage_composable as mc
@@ -94,9 +94,8 @@ def pytest_generate_tests(metafunc):
 def test_main_app(test_name):
     basename = os.path.basename(test_name)
     neos_name = BlankName(file_name=basename)
-    output_file = '{}/actual.{}.xml'.format(TEST_DATA_DIR, basename)
-    obs_path = '{}/{}'.format(TEST_DATA_DIR, 'expected.{}.xml'.format(
-        neos_name.obs_id))
+    output_file = f'{TEST_DATA_DIR}/{basename}.actual.xml'
+    obs_path = f'{TEST_DATA_DIR}/{neos_name.obs_id}.expected.xml'
     expected = mc.read_obs_from_file(obs_path)
 
     with patch('caom2utils.fits2caom2.CadcDataClient') as data_client_mock:
@@ -105,20 +104,19 @@ def test_main_app(test_name):
 
         data_client_mock.return_value.get_file_info.side_effect = get_file_info
         sys.argv = \
-            ('{} --no_validate --local {} --observation {} {} -o {} '
-             '--plugin {} --module {} --lineage {}'.
-             format(APPLICATION, _get_local(test_name), COLLECTION,
-                    test_name, output_file, PLUGIN, PLUGIN,
-                    _get_lineage(test_name))).split()
+            (f'{APPLICATION} --no_validate --local {_get_local(test_name)} ' \
+             f'--observation {COLLECTION} {test_name} -o {output_file} ' \
+             f'--plugin {PLUGIN} --module {PLUGIN} --lineage ' \
+             f'{_get_lineage(test_name)}').split()
         print(sys.argv)
-        blank_main_app()
+        main_app.to_caom2()
 
     actual = mc.read_obs_from_file(output_file)
     result = get_differences(expected, actual, 'Observation')
     if result:
-        msg = 'Differences found in observation {} test name {}\n{}'. \
-            format(expected.observation_id, test_name, '\n'.join(
-            [r for r in result]))
+        text = '\n'.join([r for r in result])
+        msg = f'Differences found in observation {expected.observation_id} ' \
+              f'test name {test_name}\n{text}'
         raise AssertionError(msg)
     # assert False  # cause I want to see logging messages
 
@@ -127,13 +125,13 @@ def _get_lineage(obs_id):
     result = ''
     for ii in LOOKUP[obs_id]:
         product_id = BlankName.extract_product_id(ii)
-        fits = mc.get_lineage(ARCHIVE, product_id, '{}.fits'.format(ii))
-        result = '{} {}'.format(result, fits)
+        fits = mc.get_lineage(ARCHIVE, product_id, f'{ii}.fits')
+        result = f'{result} {fits}'
     return result
 
 
 def _get_local(obs_id):
     result = ''
     for ii in LOOKUP[obs_id]:
-        result = '{} {}/{}.fits.header'.format(result, TEST_DATA_DIR, ii)
+        result = f'{result} {TEST_DATA_DIR}/{ii}.fits.header'
     return result
