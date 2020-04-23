@@ -118,8 +118,9 @@ def accumulate_bp(bp, uri):
 
 
 def update(observation, **kwargs):
-    """Called to fill multiple CAOM model elements and/or attributes, must
-    have this signature for import_module loading and execution.
+    """Called to fill multiple CAOM model elements and/or attributes (an n:n
+    relationship between TDM attributes and CAOM attributes). Must have this
+    signature for import_module loading and execution.
 
     :param observation A CAOM Observation model instance.
     :param **kwargs Everything else."""
