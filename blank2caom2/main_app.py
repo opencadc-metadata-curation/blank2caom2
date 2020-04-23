@@ -126,12 +126,8 @@ def update(observation, **kwargs):
     logging.debug('Begin update.')
     mc.check_param(observation, Observation)
 
-    headers = None
-    if 'headers' in kwargs:
-        headers = kwargs['headers']
-    fqn = None
-    if 'fqn' in kwargs:
-        fqn = kwargs['fqn']
+    headers = kwargs.get('headers')
+    fqn = kwargs.get('fqn')
 
     logging.debug('Done update.')
     return observation
