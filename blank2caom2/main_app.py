@@ -129,6 +129,16 @@ def update(observation, **kwargs):
 
     headers = kwargs.get('headers')
     fqn = kwargs.get('fqn')
+    uri = kwargs.get('uri')
+    blank_name = None
+    if uri is not None:
+        blank_name = BlankName(artifact_uri=uri)
+    if fqn is not None:
+        blank_name = BlankName(file_name=os.path.basename(fqn))
+    if blank_name is None:
+        raise mc.CadcException(f'Need one of fqn or uri defined for '
+                               f'{observation.observation_id}')
+
 
     logging.debug('Done update.')
     return observation
