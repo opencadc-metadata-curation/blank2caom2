@@ -67,6 +67,15 @@
 # ***********************************************************************
 #
 
+"""
+Implements the default entry point functions for the workflow 
+application.
+
+'run' executes based on either provided lists of work, or files on disk.
+'run_by_state' executes incrementally, usually based on time-boxed 
+intervals.
+"""
+
 import logging
 import sys
 import traceback
@@ -75,8 +84,8 @@ from caom2pipe import run_composable as rc
 from blank2caom2 import APPLICATION, BlankName
 
 
-meta_visitors = []
-data_visitors = []
+META_VISITORS = []
+DATA_VISITORS = []
 
 
 def _run():
@@ -88,8 +97,8 @@ def _run():
     """
     return rc.run_by_todo(config=None, name_builder=None, 
                           command_name=APPLICATION,
-                          meta_visitors=meta_visitors, 
-                          data_visitors=data_visitors, chooser=None)
+                          meta_visitors=META_VISITORS, 
+                          data_visitors=DATA_VISITORS, chooser=None)
 
 
 def run():
@@ -110,8 +119,8 @@ def _run_state():
     """
     return rc.run_by_state(config=None, name_builder=None,
                            command_name=APPLICATION, 
-                           bookmark_name=None, meta_visitors=meta_visitors,
-                           data_visitors=data_visitors, end_time=None,
+                           bookmark_name=None, meta_visitors=META_VISITORS,
+                           data_visitors=DATA_VISITORS, end_time=None,
                            source=None, chooser=None)
 
 
