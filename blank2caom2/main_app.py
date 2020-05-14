@@ -67,6 +67,11 @@
 # ***********************************************************************
 #
 
+"""
+This module implements the ObsBlueprint mapping, as well as the workflow 
+entry point that executes the workflow.
+"""
+
 import importlib
 import logging
 import os
