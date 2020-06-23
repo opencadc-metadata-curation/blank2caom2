@@ -69,11 +69,12 @@
 
 from mock import patch
 
+from caom2.obs_reader_writer import CAOM24_NAMESPACE
 from blank2caom2 import main_app, APPLICATION, COLLECTION, BlankName
 from blank2caom2 import ARCHIVE
-from caom2.diff import get_differences
 from caom2pipe import manage_composable as mc
 
+import glob
 import os
 import sys
 
@@ -81,57 +82,61 @@ THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 TEST_DATA_DIR = os.path.join(THIS_DIR, 'data')
 PLUGIN = os.path.join(os.path.dirname(THIS_DIR), 'main_app.py')
 
-LOOKUP = {'key': ['fileid1', 'fileid2']}
-
 
 def pytest_generate_tests(metafunc):
-    obs_id_list = []
-    for ii in LOOKUP:
-        obs_id_list.append(ii)
+    obs_id_list = glob.glob(f'{TEST_DATA_DIR}/*.fits.header')
     metafunc.parametrize('test_name', obs_id_list)
 
 
-def test_main_app(test_name):
+@patch('caom2utils.fits2caom2.CadcDataClient')
+@patch('caom2pipe.astro_composable.get_vo_table')
+def test_main_app(vo_mock, data_client_mock, test_name):
     basename = os.path.basename(test_name)
-    neos_name = BlankName(file_name=basename)
+    extension = '.fz'
+    file_name = basename.replace('.header', extension)
+    blank_name = BlankName(file_name=file_name)
+    obs_path = f'{TEST_DATA_DIR}/{blank_name.obs_id}.expected.xml'
     output_file = f'{TEST_DATA_DIR}/{basename}.actual.xml'
-    obs_path = f'{TEST_DATA_DIR}/{neos_name.obs_id}.expected.xml'
-    expected = mc.read_obs_from_file(obs_path)
 
-    with patch('caom2utils.fits2caom2.CadcDataClient') as data_client_mock:
-        def get_file_info(archive, file_id):
-            return {'type': 'application/fits'}
+    if os.path.exists(output_file):
+        os.unlink(output_file)
 
-        data_client_mock.return_value.get_file_info.side_effect = get_file_info
-        sys.argv = \
-            (f'{APPLICATION} --no_validate --local {_get_local(test_name)} ' \
-             f'--observation {COLLECTION} {test_name} -o {output_file} ' \
-             f'--plugin {PLUGIN} --module {PLUGIN} --lineage ' \
-             f'{_get_lineage(test_name)}').split()
-        print(sys.argv)
+    local = _get_local(basename)
+
+    data_client_mock.return_value.get_file_info.side_effect = _get_file_info
+
+    # cannot use the --not_connected parameter in this test, because the
+    # svo filter numbers will be wrong, thus the Spectral WCS will be wrong
+    # as well
+    sys.argv = \
+        (f'{APPLICATION} --no_validate --caom_namespace {CAOM24_NAMESPACE} '
+         f'--local {local} --observation {COLLECTION} {blank_name.obs_id} -o '
+         f'{output_file} --plugin {PLUGIN} --module {PLUGIN} --lineage '
+         f'{_get_lineage(blank_name)}'
+         ).split()
+    print(sys.argv)
+    try:
         main_app.to_caom2()
+    except Exception as e:
+        import logging
+        import traceback
+        logging.error(traceback.format_exc())
 
-    actual = mc.read_obs_from_file(output_file)
-    result = get_differences(expected, actual, 'Observation')
-    if result:
-        text = '\n'.join([r for r in result])
-        msg = f'Differences found in observation {expected.observation_id} ' \
-              f'test name {test_name}\n{text}'
-        raise AssertionError(msg)
+    compare_result = mc.compare_observations(output_file, obs_path)
+    if compare_result is not None:
+        raise AssertionError(compare_result)
     # assert False  # cause I want to see logging messages
 
 
-def _get_lineage(obs_id):
-    result = ''
-    for ii in LOOKUP[obs_id]:
-        product_id = BlankName.extract_product_id(ii)
-        fits = mc.get_lineage(ARCHIVE, product_id, f'{ii}.fits')
-        result = f'{result} {fits}'
+def _get_file_info(archive, file_id):
+    return {'type': 'application/fits'}
+
+
+def _get_lineage(blank_name):
+    result = mc.get_lineage(ARCHIVE, blank_name.product_id,
+                            f'{blank_name.file_name}')
     return result
 
 
 def _get_local(obs_id):
-    result = ''
-    for ii in LOOKUP[obs_id]:
-        result = f'{result} {TEST_DATA_DIR}/{ii}.fits.header'
-    return result
+    return f'{TEST_DATA_DIR}/{obs_id}.fits.header'
