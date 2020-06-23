@@ -105,9 +105,6 @@ def test_main_app(vo_mock, data_client_mock, test_name):
 
     data_client_mock.return_value.get_file_info.side_effect = _get_file_info
 
-    # cannot use the --not_connected parameter in this test, because the
-    # svo filter numbers will be wrong, thus the Spectral WCS will be wrong
-    # as well
     sys.argv = \
         (f'{APPLICATION} --no_validate --caom_namespace {CAOM24_NAMESPACE} '
          f'--local {local} --observation {COLLECTION} {blank_name.obs_id} -o '
