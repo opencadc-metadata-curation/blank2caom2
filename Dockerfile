@@ -2,21 +2,21 @@ FROM opencadc/astropy:3.8-slim
 
 RUN apt-get update
 RUN apt-get install -y \
-    build-essential \\
+    build-essential \
     git
     
-RUN pip install cadcdata && \
-    pip install cadctap && \
-    pip install caom2 && \
-    pip install caom2repo && \
-    pip install caom2utils && \
-    pip install deprecated && \
-    pip install ftputils && \
-    pip install importlib-metadata && \
-    pip install pytz && \
-    pip install PyYAML && \
-    pip install spherical-geometry && \
-    pip install vos
+RUN pip install cadcdata \
+    cadctap \
+    caom2 \
+    caom2repo \
+    caom2utils \
+    deprecated \
+    ftputils \
+    importlib-metadata \
+    pytz \
+    PyYAML \
+    spherical-geometry \
+    vos
 
 WORKDIR /usr/src/app
 
