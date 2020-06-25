@@ -5,10 +5,10 @@ working_directory: /usr/src/app/blankt2caom2
 # to the container. It must be a fully-qualified name. 
 # One of netrc_filename or proxy_filename must have a value.
 proxy_file_name: /usr/src/app/cadcproxy.pem
-# operational value is ivo://cadc.nrc.ca/caom2repo
+# operational value is ivo://cadc.nrc.ca/ams
 # - modifies entries on sc2.canfar.net
 resource_id: ivo://cadc.nrc.ca/sc2repo
-# operational value is ivo://cadc.nrc.ca/ams/neossat
+# operational value is ivo://cadc.nrc.ca/ams/blank
 # - queries entries on sc2.canfar.net
 tap_id: ivo://cadc.nrc.ca/sc2tap
 # file that contains the list of entries to process
@@ -82,5 +82,7 @@ task_types:
   - ingest
 features:
   supports_composite: False
+  supports_latest_caom: False
+  supports_multiple_files: False
   use_file_names: True
   use_urls: False
