@@ -100,6 +100,6 @@ def test_run(run_mock):
             'wrong fname on disk'
         assert test_storage.url is None, 'wrong url'
         assert test_storage.lineage == \
-            f'{test_f_id}/ad:blnak/{test_f_name}', 'wrong lineage'
+            f'{test_f_id}/ad:blank/{test_f_name}', 'wrong lineage'
     finally:
         os.getcwd = getcwd_orig
