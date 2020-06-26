@@ -84,7 +84,7 @@ from caom2pipe import manage_composable as mc
 
 
 __all__ = ['blank_main_app', 'update', 'BlankName', 'COLLECTION',
-           'APPLICATION', 'ARCHIVE']
+           'APPLICATION', 'ARCHIVE', 'to_caom2']
 
 
 APPLICATION = 'blank2caom2'
