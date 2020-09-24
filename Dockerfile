@@ -10,7 +10,6 @@ RUN pip install cadcdata \
     caom2 \
     caom2repo \
     caom2utils \
-    deprecated \
     ftputil \
     importlib-metadata \
     pytz \
@@ -20,12 +19,12 @@ RUN pip install cadcdata \
 
 WORKDIR /usr/src/app
 
-ARG OMC_REPO=opencadc-metadata-curation
+ARG OPENCADC_REPO=opencadc
 
-RUN git clone https://github.com/${OMC_REPO}/caom2pipe.git && \
+RUN git clone https://github.com/${OPENCADC_REPO}/caom2pipe.git && \
   pip install ./caom2pipe
   
-RUN git clone https://github.com/${OMC_REPO}/blank2caom2.git && \
+RUN git clone https://github.com/${OPENCADC_REPO}/blank2caom2.git && \
   cp ./blank2caom2/scripts/config.yml / && \
   cp ./blank2caom2/scripts/docker-entrypoint.sh / && \
   pip install ./blank2caom2
