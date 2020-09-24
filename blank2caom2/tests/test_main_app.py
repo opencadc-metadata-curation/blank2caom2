@@ -88,8 +88,7 @@ def pytest_generate_tests(metafunc):
 
 
 @patch('caom2utils.fits2caom2.CadcDataClient')
-@patch('caom2pipe.astro_composable.get_vo_table')
-def test_main_app(vo_mock, data_client_mock, test_name):
+def test_main_app(data_client_mock, test_name):
     basename = os.path.basename(test_name)
     extension = '.fz'
     file_name = basename.replace('.header', extension)
