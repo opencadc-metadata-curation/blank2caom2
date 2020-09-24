@@ -69,7 +69,6 @@
 
 from mock import patch
 
-from caom2.obs_reader_writer import CAOM24_NAMESPACE
 from blank2caom2 import main_app, APPLICATION, COLLECTION, BlankName
 from blank2caom2 import ARCHIVE
 from caom2pipe import manage_composable as mc
@@ -106,7 +105,7 @@ def test_main_app(vo_mock, data_client_mock, test_name):
     data_client_mock.return_value.get_file_info.side_effect = _get_file_info
 
     sys.argv = \
-        (f'{APPLICATION} --no_validate --caom_namespace {CAOM24_NAMESPACE} '
+        (f'{APPLICATION} --no_validate '
          f'--local {local} --observation {COLLECTION} {blank_name.obs_id} -o '
          f'{output_file} --plugin {PLUGIN} --module {PLUGIN} --lineage '
          f'{_get_lineage(blank_name)}'
