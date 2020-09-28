@@ -104,8 +104,8 @@ class BlankName(mc.StorageName):
                  entry=None):
         self.fname_in_ad = file_name
         super(BlankName, self).__init__(
-            obs_id, COLLECTION, BlankName.BLANK_NAME_PATTERN, fname_on_disk,
-            entry=entry)
+            obs_id, COLLECTION, BlankName.BLANK_NAME_PATTERN, 
+            fname_on_disk=file_name, entry=entry)
 
     def is_valid(self):
         return True
