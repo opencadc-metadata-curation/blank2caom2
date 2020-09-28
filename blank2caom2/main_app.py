@@ -100,10 +100,12 @@ class BlankName(mc.StorageName):
 
     BLANK_NAME_PATTERN = '*'
 
-    def __init__(self, obs_id=None, fname_on_disk=None, file_name=None):
+    def __init__(self, obs_id=None, fname_on_disk=None, file_name=None,
+                 entry=None):
         self.fname_in_ad = file_name
         super(BlankName, self).__init__(
-            obs_id, COLLECTION, BlankName.BLANK_NAME_PATTERN, fname_on_disk)
+            obs_id, COLLECTION, BlankName.BLANK_NAME_PATTERN, fname_on_disk,
+            entry=entry)
 
     def is_valid(self):
         return True
