@@ -107,7 +107,7 @@ def test_main_app(data_client_mock, test_name):
         (f'{APPLICATION} --no_validate '
          f'--local {local} --observation {COLLECTION} {blank_name.obs_id} -o '
          f'{output_file} --plugin {PLUGIN} --module {PLUGIN} --lineage '
-         f'{_get_lineage(blank_name)}'
+         f'{blank_name.lineage}'
          ).split()
     print(sys.argv)
     try:
@@ -125,12 +125,6 @@ def test_main_app(data_client_mock, test_name):
 
 def _get_file_info(archive, file_id):
     return {'type': 'application/fits'}
-
-
-def _get_lineage(blank_name):
-    result = mc.get_lineage(ARCHIVE, blank_name.product_id,
-                            f'{blank_name.file_name}')
-    return result
 
 
 def _get_local(obs_id):
