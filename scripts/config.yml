@@ -45,7 +45,7 @@ retry_file_name: retries.txt
 progress_file_name: progress.txt
 #
 # ad stream value - sorry
-# set stream to 'default', if using TaskType STORE or PULL
+# set stream to 'default', if using TaskType STORE
 stream: default
 archive: BLANK
 collection: BLANK
@@ -77,7 +77,6 @@ interval: 600
 # - store - calls cadc-data to put a file from local storage (use_local_files must be set to True)
 # - ingest - read the headers, write the xml to the endpoint found by resource_id
 # - modify - create a footprint and previews for an existing CAOM model record
-# - pull - put a file retrieved from a URL
 task_types: 
   - ingest
 features:
