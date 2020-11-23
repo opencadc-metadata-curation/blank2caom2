@@ -117,11 +117,11 @@ def _run_state():
     """Uses a state file with a timestamp to control which entries will be
     processed.
     """
-    return rc.run_by_state(config=None, name_builder=None,
-                           command_name=APPLICATION, 
-                           bookmark_name=None, meta_visitors=META_VISITORS,
-                           data_visitors=DATA_VISITORS, end_time=None,
-                           source=None, chooser=None)
+    return rc.run_by_state_ts(config=None, name_builder=None,
+                              command_name=APPLICATION, 
+                              bookmark_name=None, meta_visitors=META_VISITORS,
+                              data_visitors=DATA_VISITORS, end_time=None,
+                              source=None, chooser=None)
 
 
 def run_state():
