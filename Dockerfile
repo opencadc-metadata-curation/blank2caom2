@@ -1,9 +1,10 @@
-FROM opencadc/astropy:3.8-slim
+FROM opencadc/astropy:3.9-slim
 
-RUN apt-get update
-RUN apt-get install -y \
-    build-essential \
-    git
+RUN apt-get update -y && apt-get dist-upgrade -y && \
+    apt-get install -y \
+        build-essential \
+        git && \
+    rm -rf /var/lib/apt/lists/ /tmp/* /var/tmp/*
     
 RUN pip install cadcdata \
     cadctap \
@@ -12,7 +13,6 @@ RUN pip install cadcdata \
     caom2utils \
     ftputil \
     importlib-metadata \
-    pytz \
     PyYAML \
     spherical-geometry \
     vos
@@ -20,13 +20,10 @@ RUN pip install cadcdata \
 WORKDIR /usr/src/app
 
 ARG OPENCADC_REPO=opencadc
+ARG OPENCADC_BRANCH=master
 
-RUN git clone https://github.com/${OPENCADC_REPO}/caom2pipe.git && \
-  pip install ./caom2pipe
+RUN pip install git+https://github.com/${OPENCADC_REPO}/caom2pipe@${OPENCADC_BRANCH}#egg=caom2pipe
   
-RUN git clone https://github.com/${OPENCADC_REPO}/blank2caom2.git && \
-  cp ./blank2caom2/scripts/config.yml / && \
-  cp ./blank2caom2/scripts/docker-entrypoint.sh / && \
-  pip install ./blank2caom2
+RUN pip install git+https://github.com/${OPENCADC_REPO}/blank2caom2@${OPENCADC_BRANCH}#egg=blank2caom2
 
-ENTRYPOINT ["/docker-entrypoint.sh"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
