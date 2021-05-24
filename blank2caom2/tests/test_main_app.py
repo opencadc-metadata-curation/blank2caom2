@@ -103,12 +103,12 @@ def test_main_app(data_client_mock, test_name):
 
     data_client_mock.return_value.get_file_info.side_effect = _get_file_info
 
-    sys.argv = \
-        (f'{APPLICATION} --no_validate '
-         f'--local {local} --observation {COLLECTION} {blank_name.obs_id} -o '
-         f'{output_file} --plugin {PLUGIN} --module {PLUGIN} --lineage '
-         f'{blank_name.lineage}'
-         ).split()
+    sys.argv = (
+        f'{APPLICATION} --no_validate '
+        f'--local {local} --observation {COLLECTION} {blank_name.obs_id} -o '
+        f'{output_file} --plugin {PLUGIN} --module {PLUGIN} --lineage '
+        f'{blank_name.lineage}'
+    ).split()
     print(sys.argv)
     try:
         main_app.to_caom2()
@@ -129,3 +129,4 @@ def _get_file_info(archive, file_id):
 
 def _get_local(obs_id):
     return f'{TEST_DATA_DIR}/{obs_id}.fits.header'
+

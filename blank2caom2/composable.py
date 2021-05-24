@@ -95,10 +95,14 @@ def _run():
     :return 0 if successful, -1 if there's any sort of failure. Return status
         is used by airflow for task instance management and reporting.
     """
-    return rc.run_by_todo(config=None, name_builder=None, 
-                          command_name=APPLICATION,
-                          meta_visitors=META_VISITORS, 
-                          data_visitors=DATA_VISITORS, chooser=None)
+    return rc.run_by_todo(
+        config=None, 
+        name_builder=None, 
+        command_name=APPLICATION,
+        meta_visitors=META_VISITORS, 
+        data_visitors=DATA_VISITORS, 
+        chooser=None,
+    )
 
 
 def run():
@@ -117,11 +121,17 @@ def _run_state():
     """Uses a state file with a timestamp to control which entries will be
     processed.
     """
-    return rc.run_by_state_ts(config=None, name_builder=None,
-                              command_name=APPLICATION, 
-                              bookmark_name=None, meta_visitors=META_VISITORS,
-                              data_visitors=DATA_VISITORS, end_time=None,
-                              source=None, chooser=None)
+    return rc.run_by_state_ts(
+        config=None, 
+        name_builder=None,
+        command_name=APPLICATION, 
+        bookmark_name=None, 
+        meta_visitors=META_VISITORS,
+        data_visitors=DATA_VISITORS, 
+        end_time=None,
+        source=None, 
+        chooser=None,
+    )
 
 
 def run_state():

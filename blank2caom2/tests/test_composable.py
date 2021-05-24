@@ -93,14 +93,18 @@ def test_run(run_mock):
         args, kwargs = run_mock.call_args
         test_storage = args[0]
         assert isinstance(
-            test_storage, BlankName), type(test_storage)
+            test_storage, BlankName
+        ), type(test_storage)
         assert test_storage.obs_id == test_obs_id, 'wrong obs id'
         assert test_storage.file_name == test_f_name, 'wrong file name'
-        assert test_storage.fname_on_disk == test_f_name, \
-            'wrong fname on disk'
+        assert (
+            test_storage.fname_on_disk == test_f_name
+        ), 'wrong fname on disk'
         assert test_storage.url is None, 'wrong url'
-        assert test_storage.lineage == \
-            f'{test_f_id}/ad:{COLLECTION}/{test_f_name}', 'wrong lineage'
+        assert (
+            test_storage.lineage ==  
+            f'{test_f_id}/ad:{COLLECTION}/{test_f_name}'
+        ), 'wrong lineage'
     finally:
         os.getcwd = getcwd_orig
         # clean up the summary report text file
