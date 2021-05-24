@@ -79,7 +79,7 @@ def test_run_by_state():
     pass
 
 
-@patch('caom2pipe.execute_composable.OrganizeExecutesWithDoOne.do_one')
+@patch('caom2pipe.execute_composable.OrganizeExecutes.do_one')
 def test_run(run_mock):
     test_obs_id = 'TEST_OBS_ID'
     test_f_id = 'test_file_id'
