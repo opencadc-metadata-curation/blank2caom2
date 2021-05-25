@@ -95,8 +95,8 @@ __all__ = [
 
 
 APPLICATION = 'blank2caom2'
-COLLECTION = 'blank'
-ARCHIVE = 'blank'
+COLLECTION = 'BLANK'
+ARCHIVE = 'BLANK'
 
 
 class BlankName(mc.StorageName):
