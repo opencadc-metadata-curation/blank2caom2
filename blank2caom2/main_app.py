@@ -195,12 +195,11 @@ def _get_uris(args):
     result = []
     if args.local:
         for ii in args.local:
-            file_id = mc.StorageName.remove_extensions(os.path.basename(ii))
-            file_name = f'{file_id}.fits'
-            result.append(BlankName(file_name=file_name).file_uri)
+            result.append(SubaruName(file_name=os.path.basename(ii)).file_uri)
     elif args.lineage:
         for ii in args.lineage:
-            result.append(ii.split('/', 1)[1])
+            ignore_product_id, artifact_uri = mc.decompose_lineage(ii)
+            result.append(artifact_uri)
     else:
         raise mc.CadcException(
             f'Could not define uri from these args {args}')
