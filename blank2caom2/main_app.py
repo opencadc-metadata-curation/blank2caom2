@@ -195,7 +195,7 @@ def _get_uris(args):
     result = []
     if args.local:
         for ii in args.local:
-            result.append(SubaruName(file_name=os.path.basename(ii)).file_uri)
+            result.append(BlankName(file_name=os.path.basename(ii)).file_uri)
     elif args.lineage:
         for ii in args.lineage:
             ignore_product_id, artifact_uri = mc.decompose_lineage(ii)
