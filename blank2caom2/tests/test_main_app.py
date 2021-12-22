@@ -69,13 +69,14 @@
 
 from mock import patch
 
-from blank2caom2 import main_app, APPLICATION, COLLECTION, BlankName
-from blank2caom2 import ARCHIVE
+from blank2caom2 import fits2caom2_augmentation, main_app
+from caom2.diff import get_differences
+from caom2pipe import astro_composable as ac
 from caom2pipe import manage_composable as mc
+from caom2pipe import reader_composable as rdc
 
 import glob
 import os
-import sys
 
 THIS_DIR = os.path.dirname(os.path.realpath(__file__))
 TEST_DATA_DIR = os.path.join(THIS_DIR, 'data')
@@ -87,46 +88,37 @@ def pytest_generate_tests(metafunc):
     metafunc.parametrize('test_name', obs_id_list)
 
 
-@patch('caom2utils.fits2caom2.CadcDataClient')
-def test_main_app(data_client_mock, test_name):
-    basename = os.path.basename(test_name)
-    extension = '.fz'
-    file_name = basename.replace('.header', extension)
-    blank_name = BlankName(file_name=file_name)
-    obs_path = f'{TEST_DATA_DIR}/{blank_name.obs_id}.expected.xml'
-    output_file = f'{TEST_DATA_DIR}/{basename}.actual.xml'
-
-    if os.path.exists(output_file):
-        os.unlink(output_file)
-
-    local = _get_local(basename)
-
-    data_client_mock.return_value.get_file_info.side_effect = _get_file_info
-
-    sys.argv = (
-        f'{APPLICATION} --no_validate '
-        f'--local {local} --observation {COLLECTION} {blank_name.obs_id} -o '
-        f'{output_file} --plugin {PLUGIN} --module {PLUGIN} --lineage '
-        f'{blank_name.lineage}'
-    ).split()
-    print(sys.argv)
+@patch('caom2utils.data_util.get_local_headers_from_fits')
+def test_main_app(header_mock, test_name):
+    header_mock.side_effect = ac.make_headers_from_file
+    storage_name = main_app.BlankName(entry=test_name)
+    metadata_reader = rdc.FileMetadataReader()
+    metadata_reader.set(storage_name)
+    file_type = 'application/fits'
+    metadata_reader.file_info[storage_name.file_uri].file_type = file_type
+    kwargs = {
+        'storage_name': storage_name,
+        'metadata_reader': metadata_reader,
+    }
+    expected_fqn = f'{TEST_DATA_DIR}/{test_name}.expected.xml'
+    expected = mc.read_obs_from_file(expected_fqn)
+    in_fqn = expected_fqn.replace('.expected', '.in')
+    actual_fqn = expected_fqn.replace('expected', 'actual')
+    observation = None
+    if os.path.exists(in_fqn):
+        observation = mc.read_obs_from_file(in_fqn)
+    observation = fits2caom2_augmentation.visit(observation, **kwargs)
     try:
-        main_app.to_caom2()
+        compare_result = get_differences(expected, observation)
     except Exception as e:
-        import logging
-        import traceback
-        logging.error(traceback.format_exc())
-
-    compare_result = mc.compare_observations(output_file, obs_path)
+        mc.write_obs_to_file(observation, actual_fqn)
+        raise e
     if compare_result is not None:
-        raise AssertionError(compare_result)
+        mc.write_obs_to_file(observation, actual_fqn)
+        compare_text = '\n'.join([r for r in compare_result])
+        msg = (
+            f'Differences found in observation {expected.observation_id}\n'
+            f'{compare_text}'
+        )
+        raise AssertionError(msg)
     # assert False  # cause I want to see logging messages
-
-
-def _get_file_info(archive, file_id):
-    return {'type': 'application/fits'}
-
-
-def _get_local(obs_id):
-    return f'{TEST_DATA_DIR}/{obs_id}.fits.header'
-

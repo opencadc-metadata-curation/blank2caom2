@@ -71,51 +71,55 @@ import os
 import test_main_app
 
 from mock import Mock, patch
+from tempfile import TemporaryDirectory
 
-from blank2caom2 import composable, BlankName, COLLECTION
+from caom2pipe import manage_composable as mc
+from blank2caom2 import composable
 
 
 def test_run_by_state():
     pass
 
 
+@patch('cadcutils.net.ws.WsCapabilities.get_access_url')
 @patch('caom2pipe.execute_composable.OrganizeExecutes.do_one')
-def test_run(run_mock):
-    test_obs_id = 'TEST_OBS_ID'
+def test_run(run_mock, access_mock):
+    run_mock.return_value = 0
+    access_mock.return_value = 'https://localhost'
     test_f_id = 'test_file_id'
     test_f_name = f'{test_f_id}.fits'
     getcwd_orig = os.getcwd
     os.getcwd = Mock(return_value=test_main_app.TEST_DATA_DIR)
-    try:
-        # execution
-        composable._run()
-        assert run_mock.called, 'should have been called'
-        args, kwargs = run_mock.call_args
-        test_storage = args[0]
-        assert isinstance(
-            test_storage, BlankName
-        ), type(test_storage)
-        assert test_storage.obs_id == test_obs_id, 'wrong obs id'
-        assert test_storage.file_name == test_f_name, 'wrong file name'
-        assert (
-            test_storage.fname_on_disk == test_f_name
-        ), 'wrong fname on disk'
-        assert test_storage.url is None, 'wrong url'
-        assert (
-            test_storage.lineage ==  
-            f'{test_f_id}/ad:{COLLECTION}/{test_f_name}'
-        ), 'wrong lineage'
-    finally:
-        os.getcwd = getcwd_orig
-        # clean up the summary report text file
-        # clean up the files created as a by-product of a run
-        for f_name in [
-            'data_report.txt',
-            'failure_log.txt',
-            'rejected.yml',
-            'retries.txt',
-            'success_log.txt',
-        ]:
-            fqn = os.path.join(test_main_app.TEST_DATA_DIR, f_name)
-            if os.path.exists(fqn):
-                os.unlink(fqn)
+    config = mc.Config()
+    config.get_executors()
+    with TemporaryDirectory(dir=test_main_app.TEST_DATA_DIR) as temp_dir:
+        os.chdir(temp_dir)
+        config.working_directory = temp_dir
+        config.log_file_directory = f'{temp_dir}/logs'
+        config.rejected_directory = f'{temp_dir}/rejected'
+        mc.Config.write_to_file(config)
+
+        with open(f'{temp_dir}/test_proxy.pem', 'w') as f:
+            f.write('test content')
+        with open(f'{temp_dir}/todo.txt', 'w') as f:
+            f.write(test_f_name)
+
+        try:
+            # execution
+            test_result = composable._run()
+            assert test_result == 0, 'wrong return value'
+            assert run_mock.called, 'should have been called'
+            args, kwargs = run_mock.call_args
+            import logging
+            logging.error(args)
+            test_storage = args[0]
+            assert isinstance(
+                test_storage, mc.StorageName
+            ), type(test_storage)
+            assert test_storage.file_name == test_f_name, 'wrong file name'
+            assert (
+                test_storage.source_names[0] == test_f_name
+            ), 'wrong fname on disk'
+        finally:
+            os.getcwd = getcwd_orig
+            os.chdir(test_main_app.TEST_DATA_DIR)
