@@ -1,4 +1,4 @@
-working_directory: /usr/src/app/blank2caom2
+working_directory: /usr/src/app
 # the netrc_filename value must be a fully-qualified name
 # netrc_filename: /usr/src/app/netrc
 # this is the name of the proxy certificate file supplied 
@@ -13,6 +13,10 @@ resource_id: ivo://cadc.nrc.ca/sc2repo
 tap_id: ivo://cadc.nrc.ca/sc2tap
 # file that contains the list of entries to process
 todo_file_name: todo.txt
+data_sources:
+  - vos:test
+data_source_extensions:
+  - .fits
 # values True False
 # when True, the application will look for files with
 # .fits, .gz, .json endings as defining the work to be 
@@ -44,10 +48,6 @@ retry_file_name: retries.txt
 # this file is created in the logs directory, default is 'progress.txt'
 progress_file_name: progress.txt
 #
-# ad stream value - sorry
-# set stream to 'default', if using TaskType STORE
-stream: default
-archive: BLANK
 collection: BLANK
 #
 # CADC service execution metrics
@@ -80,7 +80,4 @@ interval: 600
 task_types: 
   - ingest
 features:
-  supports_composite: False
-  supports_multiple_files: False
-  use_file_names: True
-  use_urls: False
+  supports_latest_client: True

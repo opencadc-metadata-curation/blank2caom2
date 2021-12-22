@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 # ***********************************************************************
 # ******************  CANADIAN ASTRONOMY DATA CENTRE  *******************
 # *************  CENTRE CANADIEN DE DONNÉES ASTRONOMIQUES  **************
 #
-#  (c) 2019.                            (c) 2019.
+#  (c) 2021.                            (c) 2021.
 #  Government of Canada                 Gouvernement du Canada
 #  National Research Council            Conseil national de recherches
 #  Ottawa, Canada, K1A 0R6              Ottawa, Canada, K1A 0R6
@@ -62,84 +61,24 @@
 #  <http://www.gnu.org/licenses/>.      pas le cas, consultez :
 #                                       <http://www.gnu.org/licenses/>.
 #
-#  $Revision: 4 $
+#  : 4 $
 #
 # ***********************************************************************
 #
 
-"""
-Implements the default entry point functions for the workflow 
-application.
 
-'run' executes based on either provided lists of work, or files on disk.
-'run_by_state' executes incrementally, usually based on time-boxed 
-intervals.
-"""
-
-import logging
-import sys
-import traceback
-
-from caom2pipe import run_composable as rc
-from blank2caom2 import fits2caom2_augmentation
+from caom2pipe import caom_composable as cc
+from cfhtProc2caom2 import main_app
 
 
-BLANK_BOOKMARK = 'blank_timestmap'
-META_VISITORS = [fits2caom2_augmentation]
-DATA_VISITORS = []
+class BlankFits2caom2Visitor(cc.Fits2caom2Visitor):
+    def __init__(self, observation, **kwargs):
+        super().__init__(observation, **kwargs)
+
+    def _get_mapping(self, headers):
+        return main_app.BlanktMapping(self._storage_name, headers)
 
 
-def _run():
-    """
-    Uses a todo file to identify the work to be done.
+def visit(observation, **kwargs):
+    return BlankFits2caom2Visitor(observation, **kwargs).visit()
 
-    :return 0 if successful, -1 if there's any sort of failure. Return status
-        is used by airflow for task instance management and reporting.
-    """
-    return rc.run_by_todo(
-        config=None, 
-        name_builder=None, 
-        meta_visitors=META_VISITORS,
-        data_visitors=DATA_VISITORS, 
-        chooser=None,
-    )
-
-
-def run():
-    """Wraps _run in exception handling, with sys.exit calls."""
-    try:
-        result = _run()
-        sys.exit(result)
-    except Exception as e:
-        logging.error(e)
-        tb = traceback.format_exc()
-        logging.debug(tb)
-        sys.exit(-1)
-
-
-def _run_state():
-    """Uses a state file with a timestamp to control which entries will be
-    processed.
-    """
-    return rc.run_by_state_ts(
-        config=None, 
-        name_builder=None,
-        bookmark_name=BLANK_BOOKMARK,
-        meta_visitors=META_VISITORS,
-        data_visitors=DATA_VISITORS, 
-        end_time=None,
-        source=None, 
-        chooser=None,
-    )
-
-
-def run_state():
-    """Wraps _run_state in exception handling."""
-    try:
-        _run_state()
-        sys.exit(0)
-    except Exception as e:
-        logging.error(e)
-        tb = traceback.format_exc()
-        logging.debug(tb)
-        sys.exit(-1)
