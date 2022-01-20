@@ -77,6 +77,7 @@ from caom2pipe import manage_composable as mc
 
 
 __all__ = [
+    'BlankMapping',
     'BlankName',
     'COLLECTION',
     'APPLICATION', 
