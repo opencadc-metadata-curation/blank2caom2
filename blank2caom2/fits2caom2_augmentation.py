@@ -71,14 +71,16 @@ from caom2pipe import caom_composable as cc
 from blank2caom2 import main_app
 
 
+__all__ = ['BlankFits2caom2Visitor']
+
+
 class BlankFits2caom2Visitor(cc.Fits2caom2Visitor):
     def __init__(self, observation, **kwargs):
         super().__init__(observation, **kwargs)
 
     def _get_mapping(self, headers):
-        return main_app.BlanktMapping(self._storage_name, headers)
+        return main_app.BlankMapping(self._storage_name, headers)
 
 
 def visit(observation, **kwargs):
     return BlankFits2caom2Visitor(observation, **kwargs).visit()
-
