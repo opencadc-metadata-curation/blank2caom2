@@ -104,6 +104,8 @@ def test_main_app(header_mock, test_name):
     expected = mc.read_obs_from_file(expected_fqn)
     in_fqn = expected_fqn.replace('.expected', '.in')
     actual_fqn = expected_fqn.replace('expected', 'actual')
+    if os.path.exists(actual_fqn):
+        os.unlink(actual_fqn)
     observation = None
     if os.path.exists(in_fqn):
         observation = mc.read_obs_from_file(in_fqn)
