@@ -3,19 +3,9 @@ FROM opencadc/astropy:3.9-slim
 RUN apt-get update --no-install-recommends && apt-get dist-upgrade -y && \
     apt-get install -y \
         build-essential \
-        git && \
+        git  \
+        libcfitsio-bin && \
     rm -rf /var/lib/apt/lists/ /tmp/* /var/tmp/*
-    
-RUN pip install cadcdata \
-    cadctap \
-    caom2 \
-    caom2repo \
-    caom2utils \
-    importlib-metadata \
-    python-dateutil \
-    PyYAML \
-    spherical-geometry \
-    vos
 
 WORKDIR /usr/src/app
 
