@@ -80,8 +80,9 @@ import logging
 import sys
 import traceback
 
+from caom2pipe.manage_composable import StorageName
 from caom2pipe import run_composable as rc
-from blank2caom2 import fits2caom2_augmentation
+from blank2caom2 import fits2caom2_augmentation, COLLECTION
 
 
 BLANK_BOOKMARK = 'blank_timestmap'
@@ -96,6 +97,7 @@ def _run():
     :return 0 if successful, -1 if there's any sort of failure. Return status
         is used by airflow for task instance management and reporting.
     """
+    StorageName.collection = COLLECTION
     return rc.run_by_todo(
         config=None, 
         name_builder=None, 
@@ -121,6 +123,7 @@ def _run_incremental():
     """Uses a state file with a timestamp to control which entries will be
     processed.
     """
+    StorageName.collection = COLLECTION
     return rc.run_by_state(
         config=None, 
         name_builder=None,
