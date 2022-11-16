@@ -79,5 +79,3 @@ interval: 600
 # - modify - create a footprint and previews for an existing CAOM model record
 task_types: 
   - ingest
-features:
-  supports_latest_client: True
