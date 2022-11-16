@@ -72,17 +72,15 @@ Implements the default entry point functions for the workflow
 application.
 
 'run' executes based on either provided lists of work, or files on disk.
-'run_by_state' executes incrementally, usually based on time-boxed 
-intervals.
+'run_incremental' executes incrementally, usually based on time-boxed intervals.
 """
 
 import logging
 import sys
 import traceback
 
-from caom2pipe.manage_composable import StorageName
-from caom2pipe import run_composable as rc
-from blank2caom2 import fits2caom2_augmentation, COLLECTION
+from caom2pipe.run_composable import run_by_state, run_todo
+from blank2caom2 import fits2caom2_augmentation
 
 
 BLANK_BOOKMARK = 'blank_timestmap'
@@ -97,14 +95,7 @@ def _run():
     :return 0 if successful, -1 if there's any sort of failure. Return status
         is used by airflow for task instance management and reporting.
     """
-    StorageName.collection = COLLECTION
-    return rc.run_by_todo(
-        config=None, 
-        name_builder=None, 
-        meta_visitors=META_VISITORS,
-        data_visitors=DATA_VISITORS, 
-        chooser=None,
-    )
+    return run_by_todo( meta_visitors=META_VISITORS, data_visitors=DATA_VISITORS)
 
 
 def run():
@@ -120,20 +111,9 @@ def run():
 
 
 def _run_incremental():
-    """Uses a state file with a timestamp to control which entries will be
-    processed.
+    """Uses a state file with a timestamp to identify the work to be done.
     """
-    StorageName.collection = COLLECTION
-    return rc.run_by_state(
-        config=None, 
-        name_builder=None,
-        bookmark_name=BLANK_BOOKMARK,
-        meta_visitors=META_VISITORS,
-        data_visitors=DATA_VISITORS, 
-        end_time=None,
-        source=None, 
-        chooser=None,
-    )
+    return run_by_state( bookmark_name=BLANK_BOOKMARK, meta_visitors=META_VISITORS, data_visitors=DATA_VISITORS)
 
 
 def run_incremental():
