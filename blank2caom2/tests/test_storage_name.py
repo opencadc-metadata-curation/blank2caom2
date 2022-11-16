@@ -66,8 +66,34 @@
 #
 # ***********************************************************************
 #
-from blank2caom2 import BlankName
+
+from caom2pipe import manage_composable as mc
+from blank2caom2 import BlankName, COLLECTION
 
 
 def test_is_valid():
     assert BlankName('anything').is_valid()
+    
+
+def test_storage_name():
+    mc.StorageName.collection = COLLECTION
+    try:
+        test_obs_id = 'TEST_OBS_ID'
+        test_f_name = f'{test_obs_id}.fits'
+        test_uri = f'cadc:{COLLECTION}/{test_f_name}'
+        for entry in [
+            test_f_name,
+            test_uri,
+            f'https://localhost:8020/{test_f_name}',
+            f'vos:goliaths/test/{test_f_name}',
+        ]:
+            test_subject = BlankName(entry)
+            assert test_subject.obs_id == test_obs_id, 'wrong obs id'
+            assert test_subject.product_id == test_obs_id, 'wrong product id'
+            assert test_subject.source_names == [entry], 'wrong source names'
+            assert (
+                test_subject.destination_uris == [test_uri]
+            ), f'wrong uris {test_subject}'
+    finally:
+        mc.StorageName.collection = None
+

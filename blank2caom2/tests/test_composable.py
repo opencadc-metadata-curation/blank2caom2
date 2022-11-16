@@ -110,8 +110,6 @@ def test_run(run_mock, access_mock):
             assert test_result == 0, 'wrong return value'
             assert run_mock.called, 'should have been called'
             args, kwargs = run_mock.call_args
-            import logging
-            logging.error(args)
             test_storage = args[0]
             assert isinstance(
                 test_storage, mc.StorageName
