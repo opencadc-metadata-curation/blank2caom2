@@ -67,4 +67,22 @@
 # ***********************************************************************
 #
 
+from caom2pipe.manage_composable import Config, StorageName
+import pytest
+
 COLLECTION = 'BLANK'
+SCHEME = 'cadc'
+PREVIEW_SCHEME = 'cadc'
+
+
+@pytest.fixture()
+def test_config():
+    config = Config()
+    config.collection = COLLECTION
+    config.preview_scheme = PREVIEW_SCHEME
+    config.scheme = SCHEME
+    StorageName.collection = config.collection
+    StorageName.preview_scheme = config.preview_scheme
+    StorageName.scheme = config.scheme
+    return config
+
