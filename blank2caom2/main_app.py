@@ -104,8 +104,8 @@ class BlankName(mc.StorageName):
 
 
 class BlankMapping(cc.TelescopeMapping):
-    def __init__(self, storage_name, headers):
-        super().__init__(storage_name, headers)
+    def __init__(self, storage_name, headers, clients):
+        super().__init__(storage_name, headers, clients)
 
     def accumulate_blueprint(self, bp, application=None):
         """Configure the telescope-specific ObsBlueprint at the CAOM model
@@ -119,9 +119,9 @@ class BlankMapping(cc.TelescopeMapping):
         bp.configure_observable_axis(6)
         self._logger.debug('Done accumulate_bp.')
 
-    def update(self, observation, file_info, caom_repo_client):
+    def update(self, observation, file_info):
         """Called to fill multiple CAOM model elements and/or attributes
         (an n:n relationship between TDM attributes and CAOM attributes).
         """
-        super().update(observation, file_info, caom_repo_client)
+        super().update(observation, file_info)
         return observation
