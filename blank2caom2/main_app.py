@@ -72,6 +72,8 @@ This module implements the ObsBlueprint mapping, as well as the workflow
 entry point that executes the workflow.
 """
 
+from os.path import basename
+
 from caom2pipe import caom_composable as cc
 from caom2pipe import manage_composable as mc
 
@@ -94,9 +96,8 @@ class BlankName(mc.StorageName):
 
     BLANK_NAME_PATTERN = '*'
 
-    def __init__(self, entry=None):
-        self.fname_in_ad = entry
-        super(BlankName, self).__init__(file_name=entry, source_names=[entry])
+    def __init__(self, entry):
+        super(BlankName, self).__init__(file_name=basename(entry), source_names=[entry])
 
     def is_valid(self):
         return True
