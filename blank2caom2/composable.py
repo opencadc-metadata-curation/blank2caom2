@@ -79,7 +79,7 @@ import logging
 import sys
 import traceback
 
-from caom2pipe.run_composable import run_by_state, run_todo
+from caom2pipe.run_composable import run_by_state, run_by_todo
 from blank2caom2 import fits2caom2_augmentation
 
 
