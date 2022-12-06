@@ -6,7 +6,7 @@ then
 fi
 
 if [[ ! -e ${PWD}/state.yml ]]; then
-  if [[ "${@}" == "blank_run_state" ]]; then
+  if [[ "${@}" == "blank_run_incremental" ]]; then
     yesterday=$(date -d yesterday "+%d-%b-%Y %H:%M")
     echo "bookmarks:
     blank_timestamp:
