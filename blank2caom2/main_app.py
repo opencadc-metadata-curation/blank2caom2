@@ -96,12 +96,7 @@ class BlankName(mc.StorageName):
 
     def __init__(self, entry=None):
         self.fname_in_ad = entry
-        super(BlankName, self).__init__(
-            obs_id=entry,
-            product_id=entry,
-            file_name=entry,
-            source_names=[entry],
-        )
+        super(BlankName, self).__init__(file_name=entry, source_names=[entry])
 
     def is_valid(self):
         return True
