@@ -78,7 +78,7 @@ def test_is_valid():
 def test_storage_name(test_config):
     test_obs_id = 'TEST_OBS_ID'
     test_f_name = f'{test_obs_id}.fits'
-    test_uri = f'cadc:{COLLECTION}/{test_f_name}'
+    test_uri = f'{test_config.scheme}:{test_config.collection}/{test_f_name}'
     for entry in [
         test_f_name,
         test_uri,
