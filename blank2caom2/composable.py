@@ -83,7 +83,7 @@ from caom2pipe.run_composable import run_by_state, run_by_todo
 from blank2caom2 import fits2caom2_augmentation
 
 
-BLANK_BOOKMARK = 'blank_timestmap'
+BLANK_BOOKMARK = 'blank_bookmark'
 META_VISITORS = [fits2caom2_augmentation]
 DATA_VISITORS = []
 
