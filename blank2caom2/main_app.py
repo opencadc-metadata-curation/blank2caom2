@@ -81,11 +81,7 @@ from caom2pipe import manage_composable as mc
 __all__ = [
     'BlankMapping',
     'BlankName',
-    'APPLICATION', 
 ]
-
-
-APPLICATION = 'blank2caom2'
 
 
 class BlankName(mc.StorageName):
@@ -107,11 +103,11 @@ class BlankMapping(cc.TelescopeMapping):
     def __init__(self, storage_name, headers, clients):
         super().__init__(storage_name, headers, clients)
 
-    def accumulate_blueprint(self, bp, application=None):
+    def accumulate_blueprint(self, bp):
         """Configure the telescope-specific ObsBlueprint at the CAOM model
         Observation level."""
         self._logger.debug('Begin accumulate_bp.')
-        super().accumulate_blueprint(bp, APPLICATION)
+        super().accumulate_blueprint(bp)
         bp.configure_position_axes((1, 2))
         bp.configure_time_axis(3)
         bp.configure_energy_axis(4)
