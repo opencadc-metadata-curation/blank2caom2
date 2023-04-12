@@ -83,7 +83,6 @@ from caom2pipe.run_composable import run_by_state, run_by_todo
 from blank2caom2 import fits2caom2_augmentation
 
 
-BLANK_BOOKMARK = 'blank_bookmark'
 META_VISITORS = [fits2caom2_augmentation]
 DATA_VISITORS = []
 
@@ -95,7 +94,7 @@ def _run():
     :return 0 if successful, -1 if there's any sort of failure. Return status
         is used by airflow for task instance management and reporting.
     """
-    return run_by_todo( meta_visitors=META_VISITORS, data_visitors=DATA_VISITORS)
+    return run_by_todo(meta_visitors=META_VISITORS, data_visitors=DATA_VISITORS)
 
 
 def run():
@@ -113,7 +112,7 @@ def run():
 def _run_incremental():
     """Uses a state file with a timestamp to identify the work to be done.
     """
-    return run_by_state( bookmark_name=BLANK_BOOKMARK, meta_visitors=META_VISITORS, data_visitors=DATA_VISITORS)
+    return run_by_state(meta_visitors=META_VISITORS, data_visitors=DATA_VISITORS)
 
 
 def run_incremental():
