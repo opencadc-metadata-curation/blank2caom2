@@ -79,15 +79,14 @@ def test_storage_name(test_config):
     test_obs_id = 'TEST_OBS_ID'
     test_f_name = f'{test_obs_id}.fits'
     test_uri = f'{test_config.scheme}:{test_config.collection}/{test_f_name}'
-    for entry in [
-        test_f_name,
-        test_uri,
-        f'https://localhost:8020/{test_f_name}',
-        f'vos:goliaths/test/{test_f_name}',
-    ]:
+   for index, entry in enumerate(
+        [test_f_name, test_uri, f'https://localhost:8020/{test_f_name}', f'vos:goliaths/test/{test_f_name}']
+    ):
         test_subject = BlankName(entry)
-        assert test_subject.obs_id == test_obs_id, 'wrong obs id'
-        assert test_subject.product_id == test_obs_id, 'wrong product id'
-        assert test_subject.source_names == [entry], 'wrong source names'
-        assert test_subject.destination_uris == [test_uri], f'wrong uris {test_subject}'
+        assert test_subject.file_id == test_f_name.replace('.fits', '').replace('.header', ''), f'wrong file id {index}'
+        assert test_subject.file_uri == test_uri, f'wrong uri {index}'
+        assert test_subject.obs_id == test_obs_id, f'wrong obs id {index}'
+        assert test_subject.product_id == test_obs_id, f'wrong product id {index}'
+        assert test_subject.source_names == [entry], f'wrong source names {index}'
+        assert test_subject.destination_uris == [test_uri], f'wrong uris {index} {test_subject}'
 
