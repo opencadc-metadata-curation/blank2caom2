@@ -99,7 +99,7 @@ def test_main_app(header_mock, test_name):
         'storage_name': storage_name,
         'metadata_reader': metadata_reader,
     }
-    expected_fqn = f'{TEST_DATA_DIR}/{test_name}.expected.xml'
+    expected_fqn = f'{TEST_DATA_DIR}/{storage_name.obs_id}.expected.xml'
     expected = mc.read_obs_from_file(expected_fqn)
     in_fqn = expected_fqn.replace('.expected', '.in')
     actual_fqn = expected_fqn.replace('expected', 'actual')
