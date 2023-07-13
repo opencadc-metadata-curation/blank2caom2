@@ -95,7 +95,7 @@ def test_main_app(header_mock, test_name):
     metadata_reader = rdc.FileMetadataReader()
     metadata_reader.set(storage_name)
     file_type = 'application/fits'
-    metadata_reader.file_info[storage_name.file_uri].file_type = file_type
+    metadata_reader.file_info[storage_name.destination_uris[0]].file_type = file_type
     kwargs = {
         'storage_name': storage_name,
         'metadata_reader': metadata_reader,
