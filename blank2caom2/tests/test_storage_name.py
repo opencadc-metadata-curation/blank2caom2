@@ -79,7 +79,13 @@ def test_storage_name(test_config):
     test_f_name = f'{test_obs_id}.fits'
     test_uri = f'{test_config.scheme}:{test_config.collection}/{test_f_name}'
    for index, entry in enumerate(
-        [test_f_name, test_uri, f'https://localhost:8020/{test_f_name}', f'vos:goliaths/test/{test_f_name}']
+        [
+            test_f_name, 
+            test_uri, 
+            f'https://localhost:8020/{test_f_name}', 
+            f'vos:goliaths/test/{test_f_name}',
+            f'/tmp/{test_f_name}',
+        ]   
     ):
         test_subject = BlankName(entry)
         assert test_subject.file_id == test_f_name.replace('.fits', '').replace('.header', ''), f'wrong file id {index}'
