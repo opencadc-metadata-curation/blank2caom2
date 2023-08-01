@@ -100,7 +100,6 @@ def test_main_app(header_mock, test_name):
         'metadata_reader': metadata_reader,
     }
     expected_fqn = f'{TEST_DATA_DIR}/{storage_name.obs_id}.expected.xml'
-    expected = mc.read_obs_from_file(expected_fqn)
     in_fqn = expected_fqn.replace('.expected', '.in')
     actual_fqn = expected_fqn.replace('expected', 'actual')
     if os.path.exists(actual_fqn):
@@ -109,17 +108,17 @@ def test_main_app(header_mock, test_name):
     if os.path.exists(in_fqn):
         observation = mc.read_obs_from_file(in_fqn)
     observation = fits2caom2_augmentation.visit(observation, **kwargs)
-    try:
+    if observation is None:
+        mc.write_obs_to_file(observation, actual_fqn)
+    else:
+        expected = mc.read_obs_from_file(expected_fqn)
         compare_result = get_differences(expected, observation)
-    except Exception as e:
-        mc.write_obs_to_file(observation, actual_fqn)
-        raise e
-    if compare_result is not None:
-        mc.write_obs_to_file(observation, actual_fqn)
-        compare_text = '\n'.join([r for r in compare_result])
-        msg = (
-            f'Differences found in observation {expected.observation_id}\n'
-            f'{compare_text}'
-        )
-        raise AssertionError(msg)
+        if compare_result is not None:
+            mc.write_obs_to_file(observation, actual_fqn)
+            compare_text = '\n'.join([r for r in compare_result])
+            msg = (
+                f'Differences found in observation {expected.observation_id}\n'
+                f'{compare_text}'
+            )
+            raise AssertionError(msg)
     # assert False  # cause I want to see logging messages
