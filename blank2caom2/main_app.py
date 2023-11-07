@@ -99,8 +99,8 @@ class BlankName(mc.StorageName):
 
 
 class BlankMapping(cc.TelescopeMapping):
-    def __init__(self, storage_name, headers, clients, observable, observation):
-        super().__init__(storage_name, headers, clients, observable, observation)
+    def __init__(self, storage_name, headers, clients, observable, observation, config):
+        super().__init__(storage_name, headers, clients, observable, observation, config)
 
     def accumulate_blueprint(self, bp):
         """Configure the telescope-specific ObsBlueprint at the CAOM model Observation level."""
