@@ -106,6 +106,12 @@ class BlankMapping(cc.TelescopeMapping):
         """Configure the telescope-specific ObsBlueprint at the CAOM model Observation level."""
         self._logger.debug('Begin accumulate_bp.')
         super().accumulate_blueprint(bp)
+
+        bp.set('Plane.calibrationLevel', 1)
+        bp.set('Plane.dataProductType', 'image')
+        bp.set('Artifact.productType', 'science')
+        bp.set('Artifact.releaseType', 'data')
+
         bp.configure_position_axes((1, 2))
         bp.configure_time_axis(3)
         bp.configure_energy_axis(4)
