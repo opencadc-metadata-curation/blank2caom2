@@ -99,7 +99,7 @@ def test_main_app(header_mock, test_name, test_config):
         'metadata_reader': metadata_reader,
         'config': test_config,
     }
-    expected_fqn = f'{TEST_DATA_DIR}/{storage_name.obs_id}.expected.xml'
+    expected_fqn = test_name.replace('.fits.header', '.expected.xml')
     in_fqn = expected_fqn.replace('.expected', '.in')
     actual_fqn = expected_fqn.replace('expected', 'actual')
     if os.path.exists(actual_fqn):
@@ -124,5 +124,5 @@ def test_main_app(header_mock, test_name, test_config):
                 raise AssertionError(msg)
         else:
             mc.write_obs_to_file(observation, actual_fqn)
-            assert False, f'nothing to compare to for {test_name}'
+            assert False, f'nothing to compare to for {test_name}, missing {expected_fqn}'
     # assert False  # cause I want to see logging messages
