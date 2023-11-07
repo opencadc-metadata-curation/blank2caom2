@@ -124,3 +124,6 @@ class BlankMapping(cc.TelescopeMapping):
         and CAOM attributes).
         """
         return super().update(file_info)
+
+    def _update_artifact(self, artifact):
+        pass
