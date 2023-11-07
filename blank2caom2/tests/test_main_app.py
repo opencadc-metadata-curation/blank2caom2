@@ -88,7 +88,7 @@ def pytest_generate_tests(metafunc):
 
 
 @patch('caom2utils.data_util.get_local_headers_from_fits')
-def test_main_app(header_mock, test_name):
+def test_main_app(header_mock, test_name, test_config):
     header_mock.side_effect = ac.make_headers_from_file
     storage_name = main_app.BlankName(entry=test_name)
     metadata_reader = rdc.FileMetadataReader()
@@ -98,6 +98,7 @@ def test_main_app(header_mock, test_name):
     kwargs = {
         'storage_name': storage_name,
         'metadata_reader': metadata_reader,
+        'config': test_config,
     }
     expected_fqn = f'{TEST_DATA_DIR}/{storage_name.obs_id}.expected.xml'
     in_fqn = expected_fqn.replace('.expected', '.in')
