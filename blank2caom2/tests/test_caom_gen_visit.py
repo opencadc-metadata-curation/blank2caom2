@@ -68,7 +68,7 @@
 
 from mock import patch
 
-from blank2caom2 import fits2caom2_augmentation, main_app
+from blank2caom2 import file2caom2_augmentation, main_app
 from caom2.diff import get_differences
 from caom2pipe import astro_composable as ac
 from caom2pipe import manage_composable as mc
@@ -104,7 +104,7 @@ def test_main_app(header_mock, test_name, test_config):
     observation = None
     if os.path.exists(in_fqn):
         observation = mc.read_obs_from_file(in_fqn)
-    observation = fits2caom2_augmentation.visit(observation, **kwargs)
+    observation = file2caom2_augmentation.visit(observation, **kwargs)
     if observation is None:
         assert False, f'Did not create observation for {test_name}'
     else:
