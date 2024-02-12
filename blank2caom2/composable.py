@@ -79,10 +79,10 @@ import sys
 import traceback
 
 from caom2pipe.run_composable import run_by_state, run_by_todo
-from blank2caom2 import fits2caom2_augmentation
+from blank2caom2 import file2caom2_augmentation
 
 
-META_VISITORS = [fits2caom2_augmentation]
+META_VISITORS = [file2caom2_augmentation]
 DATA_VISITORS = []
 
 
