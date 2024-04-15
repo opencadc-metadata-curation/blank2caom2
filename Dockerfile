@@ -1,5 +1,6 @@
-ARG CADC_PYTHON_VERSION=3.11
+ARG CADC_PYTHON_VERSION=3.12
 FROM opencadc/matplotlib:${CADC_PYTHON_VERSION}-slim as builder
+ARG CADC_PYTHON_VERSION
 
 RUN apt-get update --no-install-recommends && \
     apt-get install -y build-essential git libcfitsio-bin && \
