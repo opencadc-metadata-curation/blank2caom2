@@ -85,6 +85,7 @@ def test_config():
     StorageName.collection = config.collection
     StorageName.preview_scheme = config.preview_scheme
     StorageName.scheme = config.scheme
+    StorageName.data_source_extensions = config.data_source_extensions
     return config
 
 
