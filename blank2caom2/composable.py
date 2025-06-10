@@ -2,7 +2,7 @@
 # ******************  CANADIAN ASTRONOMY DATA CENTRE  *******************
 # *************  CENTRE CANADIEN DE DONNÉES ASTRONOMIQUES  **************
 #
-#  (c) 2023.                            (c) 2023.
+#  (c) 2025.                            (c) 2025.
 #  Government of Canada                 Gouvernement du Canada
 #  National Research Council            Conseil national de recherches
 #  Ottawa, Canada, K1A 0R6              Ottawa, Canada, K1A 0R6
@@ -78,7 +78,7 @@ import logging
 import sys
 import traceback
 
-from caom2pipe.run_composable import run_by_state, run_by_todo
+from caom2pipe.run_composable import run_by_state_runner_meta, run_by_todo_runner_meta
 from blank2caom2 import file2caom2_augmentation
 
 
@@ -93,7 +93,7 @@ def _run():
     :return 0 if successful, -1 if there's any sort of failure. Return status
         is used by airflow for task instance management and reporting.
     """
-    return run_by_todo(meta_visitors=META_VISITORS, data_visitors=DATA_VISITORS)
+    return run_by_todo_runner_meta(meta_visitors=META_VISITORS, data_visitors=DATA_VISITORS)
 
 
 def run():
@@ -111,7 +111,7 @@ def run():
 def _run_incremental():
     """Uses a state file with a timestamp to identify the work to be done.
     """
-    return run_by_state(meta_visitors=META_VISITORS, data_visitors=DATA_VISITORS)
+    return run_by_state_runner_meta(meta_visitors=META_VISITORS, data_visitors=DATA_VISITORS)
 
 
 def run_incremental():
