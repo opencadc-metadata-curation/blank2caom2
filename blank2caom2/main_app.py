@@ -67,8 +67,7 @@
 #
 
 """
-This module implements the ObsBlueprint mapping, as well as the workflow 
-entry point that executes the workflow.
+This module implements the ObsBlueprint mapping, capturing the telescope data model to CAOM2 data model relationship.
 """
 
 from os.path import basename
