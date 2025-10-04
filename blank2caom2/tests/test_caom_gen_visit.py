@@ -71,8 +71,8 @@ from mock import patch
 from blank2caom2 import file2caom2_augmentation, main_app
 from cadcdata import FileInfo
 from caom2.diff import get_differences
-from caom2pipe import astro_composable as ac
-from caom2pipe import manage_composable as mc
+from caom2pipe.astro_composable import make_headers_from_file
+from caom2pipe.manage_composable import ExecutionReporter2
 
 import glob
 import os
@@ -86,8 +86,8 @@ def pytest_generate_tests(metafunc):
 def test_main_app(test_name, test_config, tmp_path, change_test_dir):
     test_config.change_working_directory(tmp_path.as_posix())
     storage_name = main_app.BlankName([test_name])
-    FileInfo(id=storage_name.file_uri, file_type='application/fits')
-    headers = ac.make_headers_from_file(test_name)
+    file_info = FileInfo(id=storage_name.file_uri, file_type='application/fits')
+    headers = make_headers_from_file(test_name)
     storage_name.file_info = {storage_name.file_uri: file_info}
     storage_name.metadata = {storage_name.file_uri: headers}
     test_reporter = ExecutionReporter2(test_config)
