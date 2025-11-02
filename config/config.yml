@@ -21,8 +21,8 @@ data_source_extensions:
   - .fits
 # values True False
 # when True, the application will look for files with
-# .fits, .gz, .json endings as defining the work to be 
-# done.
+# suffixes defined for 'data_source_extensions' as defining
+# the work to be done.
 use_local_files: True
 # values DEBUG INFO WARNING ERROR
 logging_level: DEBUG
