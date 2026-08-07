@@ -66,9 +66,14 @@
 # ***********************************************************************
 #
 
-from mock import patch
+from collections import deque
+from datetime import datetime, timedelta
 
-from caom2pipe import manage_composable as mc
+from mock import patch, PropertyMock
+
+from caom2pipe.data_source_composable import RunnerMeta
+from caom2pipe.manage_composable import Config, State, StorageName, TaskType
+from blank2caom2.main_app import BlankName
 from blank2caom2 import composable
 
 
@@ -80,7 +85,7 @@ def test_run(do_one_mock, clients_mock, test_config, tmp_path, change_test_dir):
     test_f_name = f'{test_f_id}.fits'
     test_config.change_working_directory(tmp_path.as_posix())
     test_config.proxy_file_name = 'test_proxy.fqn'
-    test_config.task_types = [mc.TaskType.INGEST]
+    test_config.task_types = [TaskType.INGEST]
     test_config.write_to_file(test_config)
 
     with open(test_config.proxy_fqn, 'w') as f:
@@ -98,6 +103,73 @@ def test_run(do_one_mock, clients_mock, test_config, tmp_path, change_test_dir):
     assert do_one_mock.called, 'should have been called'
     args, kwargs = do_one_mock.call_args
     test_storage = args[0]
-    assert isinstance(test_storage, mc.StorageName), type(test_storage)
+    assert isinstance(test_storage, StorageName), type(test_storage)
     assert test_storage.file_name == test_f_name, 'wrong file name'
     assert test_storage.source_names[0] == test_f_name, 'wrong fname on disk'
+
+
+@patch('caom2pipe.data_source_composable.QueryTimeBoxDataSourceRunnerMeta._initialize_end_dt')
+@patch(
+    'caom2pipe.data_source_composable.QueryTimeBoxDataSourceRunnerMeta.end_dt',
+    new_callable=PropertyMock(return_value=datetime(year=2019, month=3, day=7, hour=19, minute=5))
+)
+@patch('caom2pipe.client_composable.ClientCollection')
+@patch(
+    'caom2pipe.data_source_composable.QueryTimeBoxDataSourceRunnerMeta.get_time_box_work', autospec=True,
+)
+@patch('caom2pipe.execute_composable.OrganizeExecutesRunnerMeta.do_one')
+def test_run_incremental(
+    run_mock,
+    get_work_mock,
+    clients_mock,
+    end_time_mock,
+    initialize_end_dt_mock,
+    test_data_dir,
+    test_config,
+    tmp_path,
+    change_test_dir,
+):
+    test_obs_id = 'test_obs_id'
+    test_f_name = f'{test_obs_id}.fits'
+    test_config.logging_level = 'INFO'
+    test_config.change_working_directory(tmp_path)
+    test_config.proxy_file_name = 'cadcproxy.pem'
+    test_config.write_to_file(test_config)
+    with open(test_config.proxy_fqn, 'w') as f:
+        f.write('test content')
+
+    test_state_fqn = f'{tmp_path}/state.yml'
+    start_time = datetime(year=2019, month=3, day=3, hour=19, minute=5)
+    State.write_bookmark(test_state_fqn, test_config.bookmark, start_time)
+    Config.write_to_file(test_config)
+    run_mock.return_value = (0, None)
+
+    def _mock_query_listing(_, ignore_prev_exec_dt, ignore_exec_dt):
+        TEST_TIME = datetime(year=2019, month=3, day=7, hour=19, minute=5)
+        result = deque()
+        dt = TEST_TIME - timedelta(minutes=5)
+        storage_name = BlankName(source_names=[f'{test_data_dir}/{test_f_name}'])
+        result.append(RunnerMeta(storage_name, dt))
+        return result
+
+    get_work_mock.side_effect = _mock_query_listing
+
+    # execution
+    test_result = composable._run_incremental()
+    assert test_result == 0, 'mocking correct execution'
+    assert run_mock.called, 'should have been called'
+    args, _ = run_mock.call_args
+    test_storage = args[0]
+    assert isinstance(test_storage, BlankName), type(test_storage)
+    assert test_storage.obs_id == test_obs_id, f'wrong obs id {test_storage.obs_id}'
+    assert test_storage.file_name == test_f_name, 'wrong file name'
+    assert not clients_mock.data_client.get.called, 'data get'
+    assert not clients_mock.data_client.get_head.called, 'data get_head'
+    assert not clients_mock.data_client.info.called, 'data info'
+    assert not clients_mock.data_client.put.called, 'data put'
+    assert not clients_mock.data_client.remove.called, 'data remove'
+    assert not clients_mock.metadata_client.create.called, 'metadata create'
+    assert not clients_mock.metadata_client.read.called, 'metadata read'
+    assert not clients_mock.metadata_client.update.called, 'metadata update'
+    assert not clients_mock.metadata_client.delete.called, 'metadata delete'
+
