@@ -70,7 +70,8 @@ from os.path import dirname, join, realpath
 from caom2pipe.manage_composable import Config, StorageName, TaskType
 import pytest
 
-COLLECTION = 'BLANK'
+COLLECTION = 'BLANK'  # the CAOM2 scheme:collection/
+NAMESPACE = 'BLANK'  # the Storage Inventory scheme:namespace/
 SCHEME = 'cadc'
 PREVIEW_SCHEME = 'cadc'
 
@@ -79,6 +80,7 @@ PREVIEW_SCHEME = 'cadc'
 def test_config():
     config = Config()
     config.collection = COLLECTION
+    config.namespace = NAMESPACE
     config.preview_scheme = PREVIEW_SCHEME
     config.scheme = SCHEME
     config.logging_level = 'INFO'
