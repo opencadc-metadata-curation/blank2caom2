@@ -51,6 +51,7 @@ retry_file_name: retries.txt
 progress_file_name: progress.txt
 #
 collection: BLANK
+namespace: BLANK
 scheme: cadc
 preview_scheme: cadc
 #
