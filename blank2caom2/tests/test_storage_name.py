@@ -66,6 +66,7 @@
 # ***********************************************************************
 #
 
+from caom2pipe.manage_composable import StorageName
 from blank2caom2 import BlankName
 
 
@@ -74,6 +75,7 @@ def test_is_valid():
     
 
 def test_storage_name(test_config):
+    StorageName.namespace = test_config.namespace
     test_obs_id = 'TEST_OBS_ID'
     test_f_name = f'{test_obs_id}.fits'
     test_uri = f'{test_config.scheme}:{test_config.collection}/{test_f_name}'
