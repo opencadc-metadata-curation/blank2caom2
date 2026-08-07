@@ -66,7 +66,6 @@
 # ***********************************************************************
 #
 
-from caom2pipe import manage_composable as mc
 from blank2caom2 import BlankName
 
 
