@@ -72,7 +72,7 @@ from blank2caom2 import file2caom2_augmentation, main_app
 from cadcdata import FileInfo
 from caom2.diff import get_differences
 from caom2pipe.astro_composable import make_headers_from_file
-from caom2pipe.manage_composable import ExecutionReporter2
+from caom2pipe.manage_composable import ExecutionReporter2, read_obs_from_file, write_obs_to_file
 
 import glob
 import os
@@ -103,13 +103,13 @@ def test_main_app(test_name, test_config, tmp_path, change_test_dir):
         os.unlink(actual_fqn)
     observation = None
     if os.path.exists(in_fqn):
-        observation = mc.read_obs_from_file(in_fqn)
+        observation = read_obs_from_file(in_fqn)
     observation = file2caom2_augmentation.visit(observation, **kwargs)
     if observation is None:
         assert False, f'Did not create observation for {test_name}'
     else:
         if os.path.exists(expected_fqn):
-            expected = mc.read_obs_from_file(expected_fqn)
+            expected = read_obs_from_file(expected_fqn)
             compare_result = get_differences(expected, observation)
             if compare_result is not None:
                 mc.write_obs_to_file(observation, actual_fqn)
