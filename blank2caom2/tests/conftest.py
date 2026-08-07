@@ -86,6 +86,7 @@ def test_config():
     config.logging_level = 'INFO'
     config.task_types = [TaskType.INGEST]
     StorageName.collection = config.collection
+    StorageName.namespace = config.namespace
     StorageName.preview_scheme = config.preview_scheme
     StorageName.scheme = config.scheme
     StorageName.data_source_extensions = config.data_source_extensions
